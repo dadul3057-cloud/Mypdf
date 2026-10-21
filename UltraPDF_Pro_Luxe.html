@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UltraPDF Pro Luxe</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Kalam:wght@400;700&family=Caveat:wght@500&family=Homemade+Apple&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0b10;--panel:#15131b;--line:#2a2633;--gold:#d4af6a;--gold2:#f0d79a;--text:#f3efe6;--mute:#8e8898;--ok:#7fd1a0;--bad:#e08585}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 500px at 50% -10%,#241d33 0,var(--bg) 60%) fixed;color:var(--text);font-family:system-ui,-apple-system,sans-serif;padding-bottom:50px}
+header{text-align:center;padding:26px 16px 10px}
+h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:34px;font-weight:700;letter-spacing:.5px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{color:var(--mute);font-size:13px;margin-top:4px}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px}
+.tabs{display:flex;gap:6px;margin:16px 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px}
+.tab{flex:1;background:none;border:0;color:var(--mute);padding:11px 4px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer}
+.tab.on{background:linear-gradient(135deg,var(--gold),#a8823f);color:#1a1409}
+.pane{display:none}.pane.on{display:block}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.pick{display:block;border:1.5px dashed var(--gold);border-radius:14px;padding:22px 12px;text-align:center;cursor:pointer;background:rgba(212,175,106,.05);position:relative}
+.pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.pick .big{font-family:"Cormorant Garamond",Georgia,serif;font-size:22px;color:var(--gold2)}
+.pick .sub{font-size:12px;color:var(--mute);margin-top:4px}
+.pick.has{border-style:solid;background:rgba(127,209,160,.07);border-color:var(--ok)}
+.pick.has .big{color:var(--ok)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.f input,.f select,.f textarea{width:100%;margin-top:5px;background:#0e0c13;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;font-family:inherit}
+.f input[type=range]{padding:0;accent-color:var(--gold)}
+.f input[type=color]{height:42px;padding:3px}
+textarea{min-height:150px;resize:vertical}
+.bar{display:flex;justify-content:space-between;align-items:center;margin:14px 0 10px;font-size:14px}
+.ghost{background:none;border:1px solid var(--bad);color:var(--bad);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.card{background:#0e0c13;border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative}
+.card .n{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.75);font-size:11px;padding:2px 7px;border-radius:6px;color:var(--gold2)}
+.card .t{height:110px;display:flex;align-items:center;justify-content:center;background:#000}
+.card img{max-width:100%;max-height:100%;transition:transform .2s}
+.card .m{font-size:10px;color:var(--mute);text-align:center;padding:4px}
+.card .b{display:flex;justify-content:space-around;padding:4px;background:#0a090e}
+.card .b button{background:none;border:0;color:#fff;font-size:14px;padding:4px 6px;cursor:pointer}
+.btn{width:100%;border:0;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;background:linear-gradient(135deg,var(--gold),#a8823f);color:#1a1409}
+.btn.alt{background:#2a2633;color:var(--text)}
+.btn:disabled{opacity:.5}
+.btn.share{display:none;background:var(--ok);color:#0b2015}
+.st{font-size:13px;color:var(--gold2);margin-top:10px;min-height:18px}
+.prog{height:6px;background:#0e0c13;border-radius:6px;overflow:hidden;margin-top:10px;display:none}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .2s}
+video{width:100%;border-radius:12px;margin-top:12px;background:#000;max-height:260px}
+.res{font-size:13px;margin-top:10px;line-height:1.6}
+.res b{color:var(--ok)}
+#printArea{display:none}
+@media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%}.pp{page-break-after:always;text-align:center}.pp img{max-width:100%;max-height:95vh}}
+</style>
+</head>
+<body>
+<header>
+  <h1>UltraPDF Pro Luxe</h1>
+  <p>Photo → PDF · JPG Compress · Video Compress · Handwriting</p>
+</header>
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab on" data-p="p1">📸 Photo</button>
+    <button class="tab" data-p="p2">🎬 Video</button>
+    <button class="tab" data-p="p3">✍️ Handwriting</button>
+  </div>
+
+  <!-- PHOTO -->
+  <div class="pane on" id="p1">
+    <div class="box">
+      <label class="pick" id="pickPh">
+        <input type="file" id="phIn" accept="image/*" multiple>
+        <div class="big" id="phBig">📸 Photo select karne ke liye yahan tap karein</div>
+        <div class="sub" id="phSub">Gallery me "Select all" dabayein — hazaron photos ek saath</div>
+      </label>
+      <label class="pick" style="margin-top:10px;padding:14px">
+        <input type="file" id="folIn" webkitdirectory multiple>
+        <div class="big" style="font-size:18px">📁 Poora folder ek tap me chunein</div>
+        <div class="sub">Jaise DCIM / Camera — folder ki sab photos apne aap select</div>
+      </label>
+    </div>
+    <div class="box">
+      <div class="row">
+        <label class="f">PDF ka naam<input id="pdfName" value="My_PDF"></label>
+        <label class="f">Page size<select id="pageSize"><option value="a4">A4</option><option value="fit">Photo ke size ka</option></select></label>
+        <label class="f">Border<select id="margin"><option value="20">Chhota border</option><option value="0">Full page</option></select></label>
+        <label class="f">Compression<select id="preset"><option value="x">Extreme (sabse chhota)</option><option value="s" selected>Strong</option><option value="b">Balanced</option><option value="h">High quality</option></select></label>
+        <label class="f">Har PDF ka size<select id="partMB"><option value="10">~10 MB</option><option value="25" selected>~25 MB</option><option value="50">~50 MB</option><option value="100">~100 MB</option></select></label>
+        <label class="f">Max size (pixels)<select id="maxDim"><option value="2400">2400</option><option value="1600">1600</option><option value="1000" selected>1000</option><option value="700">700</option></select></label>
+      </div>
+      <label class="f" style="margin-top:12px">Quality: <span id="qv">50</span>%<input type="range" id="quality" min="10" max="95" value="50"></label>
+    </div>
+    <div class="bar"><strong id="cnt">Photos (0)</strong><button class="ghost" id="clr">🗑️ Sab hatayein</button></div>
+    <div class="grid" id="grid"></div>
+    <button class="btn" id="mkPdf">📄 Sab photos ki chhoti PDF banao</button>
+    <button class="btn alt" id="stopBtn" style="display:none;background:#5a2530">⏹️ Rokein (ab tak ki PDF mil jayegi)</button>
+    <button class="btn alt" id="mkJpg">🖼️ JPG me convert + compress karo</button>
+    <button class="btn alt" id="prt">🖨️ Print mode se PDF save</button>
+    <button class="btn share" id="shPdf">📲 Phone me save / share karein</button>
+    <div class="st" id="phSt"></div>
+    <div class="prog" id="phPg"><i></i></div>
+    <div class="res" id="phRes"></div>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="pane" id="p2">
+    <div class="box">
+      <label class="pick" id="pickVd">
+        <input type="file" id="vdIn" accept="video/*">
+        <div class="big" id="vdBig">🎬 Video select karne ke liye yahan tap karein</div>
+        <div class="sub" id="vdSub">Compress hone me video ke barabar time lagta hai</div>
+      </label>
+      <video id="vdPrev" controls style="display:none"></video>
+    </div>
+    <div class="box">
+      <div class="row">
+        <label class="f">Resolution<select id="vdRes"><option value="1280">720p</option><option value="854" selected>480p</option><option value="640">360p</option></select></label>
+        <label class="f">Compression<select id="vdBit"><option value="2500000">Low (achhi quality)</option><option value="1200000" selected>Medium</option><option value="600000">High (sabse chhota)</option></select></label>
+      </div>
+    </div>
+    <button class="btn" id="vdGo">🎬 Video compress karo</button>
+    <button class="btn share" id="vdSh">📲 Phone me save / share karein</button>
+    <div class="prog" id="vdPg"><i></i></div>
+    <div class="st" id="vdSt"></div>
+    <div class="res" id="vdRes2"></div>
+  </div>
+
+  <!-- HANDWRITING -->
+  <div class="pane" id="p3">
+    <div class="box">
+      <label class="f">Apna text likhein ya paste karein
+        <textarea id="hwText" placeholder="Yahan type karein — PDF handwriting me apne aap ban jayegi..."></textarea></label>
+      <label class="pick" id="pickHw" style="margin-top:12px;padding:14px">
+        <input type="file" id="hwIn" accept=".pdf,.txt,text/plain,application/pdf">
+        <div class="big" id="hwBig" style="font-size:18px">📂 PDF ya TXT file se text lo</div>
+        <div class="sub" id="hwSub">PDF text nikalne ke liye internet chahiye</div>
+      </label>
+    </div>
+    <div class="box">
+      <div class="row">
+        <label class="f">Handwriting style<select id="hwFont"><option value="Kalam">Kalam (Hindi + English)</option><option value="Caveat">Caveat</option><option value="Homemade Apple">Homemade Apple</option><option value="Patrick Hand">Patrick Hand</option></select></label>
+        <label class="f">Paper<select id="hwPaper"><option value="lined">Copy ke lines</option><option value="plain">Saaf kagaz</option></select></label>
+        <label class="f">Ink rang<input type="color" id="hwInk" value="#1c2f8f"></label>
+        <label class="f">Akshar size: <span id="hwSv">36</span><input type="range" id="hwSize" min="26" max="52" value="36"></label>
+      </div>
+    </div>
+    <button class="btn" id="hwGo">✍️ Handwriting PDF banao</button>
+    <button class="btn share" id="hwSh">📲 Phone me save / share karein</button>
+    <div class="st" id="hwSt"></div>
+    <div class="grid" id="hwGrid" style="margin-top:12px"></div>
+  </div>
+</div>
+<div id="printArea"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=b=>b>1048576?(b/1048576).toFixed(2)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+let photos=[],pdfBlob=null,pdfName='x.pdf';
+
+/* tabs */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab,.pane').forEach(e=>e.classList.remove('on'));
+  t.classList.add('on');$(t.dataset.p).classList.add('on');
+});
+$('quality').oninput=e=>$('qv').textContent=e.target.value;
+$('hwSize').oninput=e=>$('hwSv').textContent=e.target.value;
+
+/* sharing / saving */
+function save(blob,name,shBtn){
+  const u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),30000);
+  shBtn.style.display='block';
+  shBtn.onclick=async()=>{
+    const f=new File([blob],name,{type:blob.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:name})}catch(e){}}
+    else alert('Yahan direct download block hai. Upar ⋮ se "Open in Browser" (Chrome) chunein.');
+  };
+}
+function prog(id,p){const w=$(id);w.style.display='block';w.firstElementChild.style.width=p+'%'}
+
+/* PHOTOS */
+function addFiles(e){
+  const ok=/\.(jpe?g|png|webp|heic|heif|gif|bmp|avif)$/i;
+  Array.from(e.target.files).forEach(f=>{if(f.type.startsWith('image/')||ok.test(f.name))photos.push({file:f,url:null,rot:0})});
+  e.target.value='';drawPhotos();
+}
+$('phIn').onchange=addFiles;$('folIn').onchange=addFiles;
+function drawPhotos(){
+  const g=$('grid');g.innerHTML='';
+  const tot=photos.reduce((s,p)=>s+p.file.size,0),n=photos.length;
+  $('cnt').textContent=n>60?`Photos (${n}) — pehli 60 dikh rahi hain, baaki bhi PDF me jayengi`:`Photos (${n})`;
+  $('pickPh').classList.toggle('has',n>0);
+  $('phBig').textContent=n?`✅ ${n} photo select hui (${fmt(tot)})`:'📸 Photo select karne ke liye yahan tap karein';
+  $('phSub').textContent=n?'Aur add karne ke liye phir se tap karein':'Ek ek karke ya ek saath kai photos — sab jud jayengi';
+  photos.slice(0,60).forEach((p,i)=>{
+    if(!p.url)p.url=URL.createObjectURL(p.file);
+    const c=document.createElement('div');c.className='card';
+    c.innerHTML=`<div class="n">#${i+1}</div><div class="t"><img src="${p.url}" style="transform:rotate(${p.rot}deg)"></div><div class="m">${fmt(p.file.size)}</div>
+    <div class="b"><button data-a="l">⬅️</button><button data-a="r">🔄</button><button data-a="n">➡️</button><button data-a="x">❌</button></div>`;
+    c.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      const a=b.dataset.a;
+      if(a=='r')p.rot=(p.rot+90)%360;
+      else if(a=='x')photos.splice(i,1);
+      else{const j=i+(a=='l'?-1:1);if(j>=0&&j<photos.length)[photos[i],photos[j]]=[photos[j],photos[i]]}
+      drawPhotos();
+    });
+    g.appendChild(c);
+  });
+}
+$('clr').onclick=()=>{photos=[];$('phRes').innerHTML='';drawPhotos()};
+
+function loadImg(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('Photo khul nahi payi'));i.src=src})}
+function canvasBytes(cv,q){
+  return new Promise(r=>cv.toBlob(async b=>r({blob:b,bytes:new Uint8Array(await b.arrayBuffer()),width:cv.width,height:cv.height}),'image/jpeg',q));
+}
+async function toJpeg(p,q,maxDim){
+  const img=await createImageBitmap(p.file).catch(()=>loadImg(p.url||(p.url=URL.createObjectURL(p.file))));
+  let s=Math.min(1,maxDim/Math.max(img.width,img.height));
+  const w=Math.round(img.width*s),h=Math.round(img.height*s);
+  const sw=p.rot%180!==0,cv=document.createElement('canvas');
+  cv.width=sw?h:w;cv.height=sw?w:h;
+  const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);
+  x.translate(cv.width/2,cv.height/2);x.rotate(p.rot*Math.PI/180);x.drawImage(img,-w/2,-h/2,w,h);
+  if(img.close)img.close();
+  return canvasBytes(cv,q);
+}
+const opts=()=>({q:$('quality').value/100,m:+$('maxDim').value});
+
+let stop=false;
+$('stopBtn').onclick=()=>{stop=true};
+$('preset').onchange=e=>{
+  const v={x:[700,35],s:[1000,50],b:[1600,75],h:[2400,88]}[e.target.value];
+  $('maxDim').value=v[0];$('quality').value=v[1];$('qv').textContent=v[1];
+};
+$('mkPdf').onclick=async()=>{
+  if(!photos.length)return alert('Pehle photos select karein!');
+  const b=$('mkPdf'),sb=$('stopBtn');b.disabled=true;sb.style.display='block';stop=false;
+  const {q,m}=opts(),lim=+$('partMB').value*1048576,mode=$('pageSize').value,mg=+$('margin').value;
+  const base=$('pdfName').value.trim().replace(/\.pdf$/i,'')||'My_PDF';
+  let wl=null;try{wl=await navigator.wakeLock.request('screen')}catch(e){}
+  let part=[],sz=0,k=0,before=0,after=0,skip=0,done=0;const t0=Date.now(),n=photos.length;
+  const flush=async()=>{
+    if(!part.length)return;k++;
+    const blob=buildPdf(part,mode,mg);
+    after+=blob.size;part=[];sz=0;
+    save(blob,`${base}_part${k}.pdf`,$('shPdf'));$('shPdf').style.display='none';
+    await new Promise(r=>setTimeout(r,900));
+  };
+  try{
+    for(let i=0;i<n&&!stop;i++){
+      try{const r=await toJpeg(photos[i],q,m);r.blob=null;part.push(r);sz+=r.bytes.length;before+=photos[i].file.size}catch(e){skip++}
+      done=i+1;
+      if(sz>=lim)await flush();
+      if(i%4==0){
+        const eta=Math.round((Date.now()-t0)/done*(n-done)/1000);
+        $('phSt').textContent=`⏳ ${done}/${n} photo · ${k} PDF ban chuki · lagbhag ${Math.floor(eta/60)} min ${eta%60} sec baaki (screen on rakhein)`;
+        prog('phPg',done/n*100);
+        await new Promise(r=>setTimeout(r,0));
+      }
+    }
+    await flush();
+    prog('phPg',100);
+    $('phSt').textContent=stop?`⏹️ Roka gaya — ${k} PDF ban gayi`:`✅ Sab ho gaya — ${k} PDF`;
+    $('phRes').innerHTML=`Original: ${fmt(before)} → PDF total: <b>${fmt(after)}</b> (${before?Math.round((1-after/before)*100):0}% bachat)${skip?`<br>${skip} photo khul nahi payi, chhod di gayi`:''}`;
+  }catch(e){alert('Error: '+e.message)}
+  if(wl)try{wl.release()}catch(e){}
+  b.disabled=false;sb.style.display='none';
+};
+const _oldPdf=async()=>{
+  if(!photos.length)return alert('Pehle kam se kam 1 photo select karein!');
+  const b=$('mkPdf');b.disabled=true;const {q,m}=opts();
+  try{
+    const out=[];
+    for(let i=0;i<photos.length;i++){
+      $('phSt').textContent=`⏳ Page ${i+1}/${photos.length} ban raha hai...`;prog('phPg',i/photos.length*100);
+      await new Promise(r=>setTimeout(r,15));out.push(await toJpeg(photos[i],q,m));
+    }
+    let n=$('pdfName').value.trim()||'My_PDF';if(!/\.pdf$/i.test(n))n+='.pdf';
+    pdfBlob=buildPdf(out,$('pageSize').value,+$('margin').value);pdfName=n;
+    prog('phPg',100);
+    const orig=photos.reduce((s,p)=>s+p.file.size,0);
+    $('phSt').textContent='✅ PDF taiyar hai!';
+    $('phRes').innerHTML=`Original photos: ${fmt(orig)} → PDF: <b>${fmt(pdfBlob.size)}</b>`;
+    save(pdfBlob,n,$('shPdf'));
+  }catch(e){alert('Error: '+e.message)}
+  b.disabled=false;
+};
+
+$('mkJpg').onclick=async()=>{
+  if(!photos.length)return alert('Pehle photo select karein!');
+  if(photos.length>30&&!confirm(photos.length+' JPG alag-alag download hongi. PDF option behtar hai. Phir bhi karein?'))return;
+  const b=$('mkJpg');b.disabled=true;const {q,m}=opts();let before=0,after=0;
+  try{
+    for(let i=0;i<photos.length;i++){
+      $('phSt').textContent=`⏳ JPG ${i+1}/${photos.length}...`;prog('phPg',i/photos.length*100);
+      await new Promise(r=>setTimeout(r,15));
+      const r=await toJpeg(photos[i],q,m);before+=photos[i].file.size;after+=r.blob.size;
+      const nm=photos[i].file.name.replace(/\.[^.]+$/,'')+'_compressed.jpg';
+      save(r.blob,nm,$('shPdf'));
+      await new Promise(r=>setTimeout(r,350));
+    }
+    prog('phPg',100);$('phSt').textContent='✅ JPG ban gayi!';
+    $('phRes').innerHTML=`Pehle: ${fmt(before)} → Ab: <b>${fmt(after)}</b> (${Math.max(0,Math.round((1-after/before)*100))}% bachat)`;
+    $('shPdf').style.display='none';
+  }catch(e){alert('Error: '+e.message)}
+  b.disabled=false;
+};
+
+$('prt').onclick=()=>{
+  if(!photos.length)return alert('Pehle photo select karein!');
+  $('printArea').innerHTML=photos.map(p=>`<div class="pp"><img src="${p.url}" style="transform:rotate(${p.rot}deg)"></div>`).join('');
+  window.print();
+};
+
+/* PDF 1.4 writer (no libraries) */
+function buildPdf(imgs,mode,mg){
+  const ch=[],off=[],enc=new TextEncoder();let o=0;
+  const ws=s=>{const b=enc.encode(s);ch.push(b);o+=b.length};
+  const wb=b=>{ch.push(b);o+=b.length};
+  const N=imgs.length,T=2+N*3;
+  ws('%PDF-1.4\n');
+  off[1]=o;ws('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+  off[2]=o;ws(`2 0 obj\n<< /Type /Pages /Kids [${imgs.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] /Count ${N} >>\nendobj\n`);
+  imgs.forEach((im,i)=>{
+    const pi=3+i*3,ci=pi+1,ii=pi+2;
+    let W=595.28,H=841.89,dw,dh,dx=0,dy=0;
+    if(mode=='fit'){W=im.width*.75;H=im.height*.75;dw=W;dh=H}
+    else{const r=Math.min((W-mg*2)/im.width,(H-mg*2)/im.height);dw=im.width*r;dh=im.height*r;dx=(W-dw)/2;dy=(H-dh)/2}
+    off[pi]=o;ws(`${pi} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W.toFixed(2)} ${H.toFixed(2)}] /Resources << /XObject << /Im0 ${ii} 0 R >> >> /Contents ${ci} 0 R >>\nendobj\n`);
+    const cmd=`q\n${dw.toFixed(2)} 0 0 ${dh.toFixed(2)} ${dx.toFixed(2)} ${dy.toFixed(2)} cm\n/Im0 Do\nQ\n`;
+    off[ci]=o;ws(`${ci} 0 obj\n<< /Length ${cmd.length} >>\nstream\n${cmd}endstream\nendobj\n`);
+    off[ii]=o;ws(`${ii} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${im.width} /Height ${im.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.bytes.length} >>\nstream\n`);
+    wb(im.bytes);ws('\nendstream\nendobj\n');
+  });
+  const xs=o;ws(`xref\n0 ${T+1}\n0000000000 65535 f \n`);
+  for(let i=1;i<=T;i++)ws(String(off[i]).padStart(10,'0')+' 00000 n \n');
+  ws(`trailer\n<< /Size ${T+1} /Root 1 0 R >>\nstartxref\n${xs}\n%%EOF`);
+  return new Blob(ch,{type:'application/pdf'});
+}
+
+/* VIDEO */
+let vFile=null,vBlob=null;
+$('vdIn').onchange=e=>{
+  vFile=e.target.files[0];if(!vFile)return;
+  $('pickVd').classList.add('has');
+  $('vdBig').textContent=`✅ 1 video select hui (${fmt(vFile.size)})`;
+  $('vdSub').textContent=vFile.name;
+  const v=$('vdPrev');v.src=URL.createObjectURL(vFile);v.style.display='block';
+};
+$('vdGo').onclick=async()=>{
+  if(!vFile)return alert('Pehle video select karein!');
+  if(!window.MediaRecorder)return alert('Is browser me video compress support nahi. Chrome use karein.');
+  const b=$('vdGo');b.disabled=true;$('vdRes2').innerHTML='';
+  try{
+    const v=document.createElement('video');v.src=URL.createObjectURL(vFile);v.playsInline=true;v.volume=0.001;
+    await new Promise((ok,no)=>{v.onloadedmetadata=ok;v.onerror=()=>no(new Error('Video khul nahi payi'))});
+    const maxW=+$('vdRes').value,s=Math.min(1,maxW/Math.max(v.videoWidth,v.videoHeight));
+    const cv=document.createElement('canvas');cv.width=Math.round(v.videoWidth*s/2)*2;cv.height=Math.round(v.videoHeight*s/2)*2;
+    const x=cv.getContext('2d'),st=cv.captureStream(30);
+    const vs=v.captureStream?v.captureStream():null;
+    if(vs)vs.getAudioTracks().forEach(t=>st.addTrack(t));
+    const mt=['video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'';
+    const rec=new MediaRecorder(st,{mimeType:mt,videoBitsPerSecond:+$('vdBit').value,audioBitsPerSecond:96000});
+    const parts=[];rec.ondataavailable=e=>e.data.size&&parts.push(e.data);
+    const done=new Promise(r=>rec.onstop=r);
+    rec.start(500);await v.play();
+    (function loop(){
+      if(v.ended||v.paused&&v.currentTime>=v.duration)return;
+      x.drawImage(v,0,0,cv.width,cv.height);
+      prog('vdPg',v.currentTime/v.duration*100);
+      $('vdSt').textContent=`⏳ Compress ho raha hai... ${Math.round(v.currentTime/v.duration*100)}% (screen on rakhein)`;
+      requestAnimationFrame(loop);
+    })();
+    await new Promise(r=>v.onended=r);rec.stop();await done;
+    const ext=mt.includes('mp4')?'mp4':'webm';
+    vBlob=new Blob(parts,{type:mt||'video/webm'});
+    prog('vdPg',100);$('vdSt').textContent='✅ Video compress ho gayi!';
+    $('vdRes2').innerHTML=`Pehle: ${fmt(vFile.size)} → Ab: <b>${fmt(vBlob.size)}</b>`;
+    save(vBlob,vFile.name.replace(/\.[^.]+$/,'')+'_small.'+ext,$('vdSh'));
+  }catch(e){alert('Error: '+e.message)}
+  b.disabled=false;
+};
+
+/* HANDWRITING */
+$('hwIn').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  $('pickHw').classList.add('has');$('hwBig').textContent='⏳ Text nikal raha hoon...';
+  try{
+    let t='';
+    if(/\.pdf$/i.test(f.name)){
+      if(!window.pdfjsLib){
+        await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=ok;s.onerror=()=>no(new Error('Internet nahi hai — PDF text nahi nikal sakte'));document.head.appendChild(s)});
+        pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+      const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+      for(let i=1;i<=pdf.numPages;i++){const c=await(await pdf.getPage(i)).getTextContent();t+=c.items.map(z=>z.str).join(' ')+'\n\n'}
+    }else t=await f.text();
+    $('hwText').value=t.trim();
+    $('hwBig').textContent=`✅ ${f.name} (${t.length} akshar)`;
+  }catch(err){$('hwBig').textContent='📂 PDF ya TXT file se text lo';alert(err.message)}
+  e.target.value='';
+};
+
+$('hwGo').onclick=async()=>{
+  const text=$('hwText').value.trim();
+  if(!text)return alert('Pehle text likhein ya file chunein!');
+  const b=$('hwGo');b.disabled=true;$('hwSt').textContent='⏳ Handwriting ban rahi hai...';
+  try{
+    const font=$('hwFont').value,size=+$('hwSize').value,ink=$('hwInk').value,lined=$('hwPaper').value=='lined';
+    try{await document.fonts.load(`${size}px "${font}"`,text.slice(0,50))}catch(e){}
+    const W=1240,H=1754,L=150,R=W-90,T=190,LH=Math.round(size*1.55),pages=[];
+    let cv,x,y;
+    const newPage=()=>{
+      cv=document.createElement('canvas');cv.width=W;cv.height=H;x=cv.getContext('2d');
+      x.fillStyle='#fdfcf6';x.fillRect(0,0,W,H);
+      if(lined){
+        x.strokeStyle='rgba(90,130,200,.35)';x.lineWidth=2;
+        for(let yy=T;yy<H-80;yy+=LH){x.beginPath();x.moveTo(0,yy);x.lineTo(W,yy);x.stroke()}
+        x.strokeStyle='rgba(220,90,90,.5)';x.beginPath();x.moveTo(L-30,0);x.lineTo(L-30,H);x.stroke();
+      }
+      x.font=`${size}px "${font}",cursive`;x.fillStyle=ink;x.textBaseline='alphabetic';
+      y=T-8;pages.push(cv);
+    };
+    newPage();
+    const rnd=a=>(Math.random()-.5)*a;
+    for(const para of text.split(/\n/)){
+      let cx=L+(para.startsWith(' ')?40:0),words=para.split(/\s+/).filter(Boolean);
+      if(!words.length){y+=LH;if(y>H-100)newPage();continue}
+      for(const w of words){
+        const ww=x.measureText(w+' ').width;
+        if(cx+ww>R){cx=L;y+=LH;if(y>H-100)newPage()}
+        x.save();x.translate(cx,y+rnd(3));x.rotate(rnd(.025));x.fillStyle=ink;x.globalAlpha=.88+Math.random()*.12;
+        x.fillText(w,0,0);x.restore();cx+=ww+rnd(4);
+      }
+      y+=LH;if(y>H-100)newPage();
+    }
+    const g=$('hwGrid');g.innerHTML='';const out=[];
+    for(const p of pages){
+      out.push(await canvasBytes(p,.85));
+      const c=document.createElement('div');c.className='card';c.innerHTML=`<div class="t" style="height:150px"><img src="${p.toDataURL('image/jpeg',.4)}"></div>`;g.appendChild(c);
+    }
+    const blob=buildPdf(out,'fit',0);
+    $('hwSt').textContent=`✅ ${pages.length} page ki handwriting PDF taiyar (${fmt(blob.size)})`;
+    save(blob,'Handwriting.pdf',$('hwSh'));
+  }catch(e){alert('Error: '+e.message)}
+  b.disabled=false;
+};
+</script>
+</body>
+</html>
